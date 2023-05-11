@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/10 19:54:33 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/11 18:08:02 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,28 @@ char	*get_next_line(int fd)
 	while (read(fd, buffer->buffer, BUFFER_SIZE) > 0)
 	{
 		line = ft_line(buffer, line);
-		while (buffer->buffer[buffer->i] != '\0'
-			&& buffer->buffer[buffer->i] != '\n')
+		while (buffer->i < BUFFER_SIZE && buffer->buffer[buffer->i] != '\n')
+		{
 			line[buffer->i + buffer->cnt] = buffer->buffer[buffer->i];
+			buffer->i++;
+		}
 		if (buffer->buffer[buffer->i] != '\n')
-			buffer->cnt += buffer->i; // tu jest chyba zle
+		{
+			buffer->cnt += buffer->i;
+			while (buffer->i > 0)
+			{
+				buffer->buffer[buffer->i] = 0;
+				buffer->i--;
+			}
+		}
 		else
 		{
 			buffer->cnt = 0;
 			return (line);
 		}
 	}
-	ft_buffer_clean(buffer, &head); // moze wrzucic clean wczesniej gdzies?
-	return (NULL);
+	ft_buffer_clean(buffer, &head);
+	return (line);
 }
 
 // allowed functions : read, malloc, free
