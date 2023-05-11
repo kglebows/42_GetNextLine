@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/11 18:30:06 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/11 20:04:24 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,23 +62,23 @@ void	ft_buffer_clean(t_buffer *buffer, t_buffer **head)
 	free(buffer);
 }
 
-char	*ft_line(t_buffer *buffer, char *line)
+char	*ft_line(t_buffer *buffer, char *line, ssize_t ret)
 {
 	int		i;
-	int		j;
 	char	*join;
 
 	join = NULL;
 	i = buffer->i;
-	j = 0;
-	while (i <= BUFFER_SIZE && buffer->buffer[i] != '\n')
+	while (i <= ret && buffer->buffer[i] != '\n')
+		i++;
+	if (buffer->buffer[i] == '\n')
 		i++;
 	if (!line)
 	{
-		line = malloc((sizeof(char) * i) + 1);
+		line = malloc((sizeof(char) * i) + 1); // error tu 
+		line[i] = '\0';
 		if (!line)
 			return (NULL);
-		line[i] = '\n';
 		return (line);
 	}
 	join = ft_line_join(line, i, buffer->cnt);
@@ -91,9 +91,9 @@ char	*ft_line_join(char *line, int i, ssize_t cnt)
 	char	*join;
 
 	join = malloc((sizeof(char) * (i + cnt)) + 1);
+	join[i + cnt] = '\0';
 	if (!join)
 		return (NULL);
-	join[i + cnt] = '\n';
 	while (i >= 0)
 	{
 		join[i] = line[i];

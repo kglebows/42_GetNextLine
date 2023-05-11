@@ -6,26 +6,34 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/11 18:08:02 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/11 21:34:50 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
+#include <fcntl.h>	
+# include <unistd.h>
+# include <stdlib.h>
+# include <stddef.h>
+
 
 char	*get_next_line(int fd)
 {
 	static t_buffer	*head = NULL;
 	t_buffer		*buffer;
 	char			*line;
+	ssize_t			ret;
+	
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
 		return (NULL);
 	line = NULL;
 	buffer = ft_buffer_head(&head, fd);
-	while (read(fd, buffer->buffer, BUFFER_SIZE) > 0)
+	while ((ret = read(fd, buffer->buffer, BUFFER_SIZE)) > 0)
 	{
-		line = ft_line(buffer, line);
-		while (buffer->i < BUFFER_SIZE && buffer->buffer[buffer->i] != '\n')
+		line = ft_line(buffer, line, ret);
+		while (buffer->i < ret && buffer->buffer[buffer->i] != '\n')
 		{
 			line[buffer->i + buffer->cnt] = buffer->buffer[buffer->i];
 			buffer->i++;
@@ -42,11 +50,45 @@ char	*get_next_line(int fd)
 		else
 		{
 			buffer->cnt = 0;
+			buffer->buffer[buffer->i] = '\n';
 			return (line);
 		}
 	}
+	if (ret < 0)
+		return (NULL);
 	ft_buffer_clean(buffer, &head);
 	return (line);
+}
+
+int main()
+{
+	int fd;
+	// char buff[BUFFER_SIZE];
+	char path[] = "test.txt";
+	fd = open(path, O_RDONLY);
+	// get_next_line(fd);
+	// get_next_line(fd);
+	// printf("\n");
+	// char *d;
+	// printf("%s",d);
+	// d = get_next_line(fd);
+	// printf("%s",d);
+	
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	// printf("%s",get_next_line(fd));
+	// printf("%s",get_next_line(fd));
+	// printf("%s",get_next_line(fd));
+	// printf("%s",get_next_line(fd));
+	// printf("%s",get_next_line(fd));
+	
+// get_next_line(fd);
+// get_next_line(fd);
+// get_next_line(fd);
+// get_next_line(fd);
+// get_next_line(fd);
+	// printf("\n");
+	return (0);
 }
 
 // allowed functions : read, malloc, free
