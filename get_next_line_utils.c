@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/14 15:46:23 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/14 16:30:48 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	ft_buffer_clean(t_buffer *buffer, t_buffer **head)
 			temp = temp->next;
 		temp->next = buffer->next;
 	}
+	if (buffer->read == -1)
+		head = NULL;
 	free(buffer);
 	buffer = NULL;
 }
@@ -69,7 +71,7 @@ char	*ft_line(t_buffer *buffer, char *line)
 	while (buffer->buffer[i] != '\0' && buffer->buffer[i] != '\n')
 		i++;
 	if (buffer->buffer[i] == '\n')
-		i++;	
+		i++;
 	if (!line && i > 0)
 	{	
 		line = malloc((sizeof(char) * (i + 1)));
@@ -79,7 +81,7 @@ char	*ft_line(t_buffer *buffer, char *line)
 		ft_buffer2line(line, buffer, 0);
 		return (line);
 	}
-	join = ft_line_join(line, i, buffer);
+	join = ft_line_join(line, i - buffer->i, buffer);
 	free(line);
 	if (!join)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/14 15:45:30 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/14 16:18:42 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,12 @@ char	*get_next_line(int fd)
 
 void	ft_buffer_refill(t_buffer *buffer, int fd)
 {
-	while (buffer->i > 0)
+	while (buffer->read > 0)
 	{
-		buffer->i--;		
-		buffer->buffer[buffer->i] = '\0';
+		buffer->read--;		
+		buffer->buffer[buffer->read] = '\0';
 	}
+	buffer->i = 0;
 	buffer->read = read(fd, buffer->buffer, BUFFER_SIZE);
 	if (buffer->read > 0)
 		buffer->buffer[buffer->read] = '\0';
@@ -84,8 +85,11 @@ void	ft_buffer_refill(t_buffer *buffer, int fd)
 // 	// printf("%s",get_next_line(fd));
 // 	// printf("%s",get_next_line(fd));
 // 	// printf("%s",get_next_line(fd));
-	
-// // get_next_line(fd);
+// 	 get_next_line(fd);
+// 	 get_next_line(fd);
+// 	 printf("%s",get_next_line(fd));
+// 	 printf("%s",get_next_line(fd));
+// 	 printf("%s",get_next_line(fd));
 // // get_next_line(fd);
 // // get_next_line(fd);
 // // get_next_line(fd);
