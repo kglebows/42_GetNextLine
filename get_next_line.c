@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/11 21:34:50 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/14 15:45:30 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,73 +23,76 @@ char	*get_next_line(int fd)
 	static t_buffer	*head = NULL;
 	t_buffer		*buffer;
 	char			*line;
-	ssize_t			ret;
-	
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd,0,0) < 0)
 		return (NULL);
 	line = NULL;
 	buffer = ft_buffer_head(&head, fd);
-	while ((ret = read(fd, buffer->buffer, BUFFER_SIZE)) > 0)
+	if (!buffer || buffer->read == -1 || buffer->read == 0)
+		return (ft_buffer_clean(buffer, &head), NULL);
+	while (buffer->read > 0)
 	{
-		line = ft_line(buffer, line, ret);
-		while (buffer->i < ret && buffer->buffer[buffer->i] != '\n')
+		line = ft_line(buffer, line);
+		if (!line)
+			return (NULL);
+		if (buffer->buffer[buffer->i] == '\n')
 		{
-			line[buffer->i + buffer->cnt] = buffer->buffer[buffer->i];
 			buffer->i++;
-		}
-		if (buffer->buffer[buffer->i] != '\n')
-		{
-			buffer->cnt += buffer->i;
-			while (buffer->i > 0)
-			{
-				buffer->buffer[buffer->i] = 0;
-				buffer->i--;
-			}
-		}
-		else
-		{
-			buffer->cnt = 0;
-			buffer->buffer[buffer->i] = '\n';
 			return (line);
 		}
+		if (buffer->buffer[buffer->i] == '\0')
+			ft_buffer_refill(buffer, fd);
+		if (buffer->read == -1)
+		{
+			free(line);
+			line = NULL;
+		}
 	}
-	if (ret < 0)
-		return (NULL);
 	ft_buffer_clean(buffer, &head);
 	return (line);
 }
 
-int main()
+void	ft_buffer_refill(t_buffer *buffer, int fd)
 {
-	int fd;
-	// char buff[BUFFER_SIZE];
-	char path[] = "test.txt";
-	fd = open(path, O_RDONLY);
-	// get_next_line(fd);
-	// get_next_line(fd);
-	// printf("\n");
-	// char *d;
-	// printf("%s",d);
-	// d = get_next_line(fd);
-	// printf("%s",d);
-	
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-	// printf("%s",get_next_line(fd));
-	
-// get_next_line(fd);
-// get_next_line(fd);
-// get_next_line(fd);
-// get_next_line(fd);
-// get_next_line(fd);
-	// printf("\n");
-	return (0);
+	while (buffer->i > 0)
+	{
+		buffer->i--;		
+		buffer->buffer[buffer->i] = '\0';
+	}
+	buffer->read = read(fd, buffer->buffer, BUFFER_SIZE);
+	if (buffer->read > 0)
+		buffer->buffer[buffer->read] = '\0';
 }
+// int main()
+// {
+// 	int fd;
+// 	// char buff[BUFFER_SIZE];
+// 	char path[] = "test.txt";
+// 	fd = open(path, O_RDONLY);
+// 	// get_next_line(fd);
+// 	// get_next_line(fd);
+// 	// printf("\n");
+// 	// char *d;
+// 	// printf("%s",d);
+// 	// d = get_next_line(fd);
+// 	// printf("%s",d);
+	
+// 	printf("%s",get_next_line(fd));
+// 	printf("%s",get_next_line(fd));
+// 	// printf("%s",get_next_line(fd));
+// 	// printf("%s",get_next_line(fd));
+// 	// printf("%s",get_next_line(fd));
+// 	// printf("%s",get_next_line(fd));
+// 	// printf("%s",get_next_line(fd));
+	
+// // get_next_line(fd);
+// // get_next_line(fd);
+// // get_next_line(fd);
+// // get_next_line(fd);
+// // get_next_line(fd);
+// 	// printf("\n");
+// 	return (0);
+// }
 
 // allowed functions : read, malloc, free
 

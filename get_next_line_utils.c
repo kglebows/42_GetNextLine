@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/11 20:04:24 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/14 15:46:23 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,10 @@ t_buffer	*ft_buffer_head(t_buffer **head, int fd)
 		return (NULL);
 	buffer->fd = fd;
 	buffer->i = 0;
-	buffer->cnt = 0;
-	if (*head == NULL)
-		buffer->next = NULL;
-	else
-		buffer->next = *head;
+	buffer->read = read(fd, buffer->buffer, BUFFER_SIZE);
+	if (buffer->read > 0)
+		buffer->buffer[buffer->read] = '\0';
+	buffer->next = *head;
 	*head = buffer;
 	return (buffer);
 }
@@ -54,50 +53,73 @@ void	ft_buffer_clean(t_buffer *buffer, t_buffer **head)
 			temp = temp->next;
 		temp->next = buffer->next;
 	}
-	while (buffer->i > 0)
-	{
-		buffer->buffer[buffer->i] = 0;
-		buffer->i--;
-	}
 	free(buffer);
+	buffer = NULL;
 }
 
-char	*ft_line(t_buffer *buffer, char *line, ssize_t ret)
+char	*ft_line(t_buffer *buffer, char *line)
 {
 	int		i;
 	char	*join;
 
 	join = NULL;
+	if (buffer == NULL)
+		return (NULL);
 	i = buffer->i;
-	while (i <= ret && buffer->buffer[i] != '\n')
+	while (buffer->buffer[i] != '\0' && buffer->buffer[i] != '\n')
 		i++;
 	if (buffer->buffer[i] == '\n')
-		i++;
-	if (!line)
-	{
-		line = malloc((sizeof(char) * i) + 1); // error tu 
-		line[i] = '\0';
+		i++;	
+	if (!line && i > 0)
+	{	
+		line = malloc((sizeof(char) * (i + 1)));
 		if (!line)
 			return (NULL);
+		line[i] = '\0';
+		ft_buffer2line(line, buffer, 0);
 		return (line);
 	}
-	join = ft_line_join(line, i, buffer->cnt);
+	join = ft_line_join(line, i, buffer);
 	free(line);
+	if (!join)
+		return (NULL);
 	return (join);
 }
 
-char	*ft_line_join(char *line, int i, ssize_t cnt)
+void	ft_buffer2line(char *line, t_buffer *buffer, int start)
+{	
+	while (buffer->buffer[buffer->i] != '\0' &&
+	buffer->buffer[buffer->i] != '\n')
+	{
+		line[buffer->i + start] = buffer->buffer[buffer->i];
+		buffer->i++;
+	}
+	if (buffer->buffer[buffer->i] == '\n')
+	{
+		line[buffer->i + start] = '\n';
+	}
+
+}
+
+char	*ft_line_join(char *line, int i, t_buffer *buffer)
 {
 	char	*join;
+	int		line_len;
 
-	join = malloc((sizeof(char) * (i + cnt)) + 1);
-	join[i + cnt] = '\0';
+	if (i == 0)
+		return (NULL);
+	line_len = 0;
+	while (line[line_len] != '\0')
+		line_len++;
+	join = malloc((sizeof(char) * (i + line_len + 1)));
 	if (!join)
 		return (NULL);
-	while (i >= 0)
+	join[i + line_len] = '\0';
+	ft_buffer2line(join, buffer, line_len);
+	while (line_len > 0)
 	{
-		join[i] = line[i];
-		i--;
+		line_len--;
+		join[line_len] = line[line_len];
 	}
 	return (join);
 }
