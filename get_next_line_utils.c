@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/14 16:30:48 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/16 16:22:19 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	*ft_line(t_buffer *buffer, char *line)
 	join = NULL;
 	if (buffer == NULL)
 		return (NULL);
-	i = buffer->i;
+	i = buffer->i; // TU KURWA!
 	while (buffer->buffer[i] != '\0' && buffer->buffer[i] != '\n')
 		i++;
 	if (buffer->buffer[i] == '\n')

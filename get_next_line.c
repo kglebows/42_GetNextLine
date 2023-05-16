@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/14 16:18:42 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/16 15:58:46 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ char	*get_next_line(int fd)
 		if (buffer->buffer[buffer->i] == '\n')
 		{
 			buffer->i++;
+			if (buffer->i >= buffer->read)
+				ft_buffer_refill(buffer, fd);
 			return (line);
 		}
 		if (buffer->buffer[buffer->i] == '\0')
