@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/16 19:20:10 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:49:02 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 t_buffer	*ft_buffer_head(t_buffer **head, int fd)
 {
@@ -61,15 +61,23 @@ char	*ft_line(t_buffer *buffer, char *line)
 {
 	int		i;
 	char	*join;
+	int		j;
 
 	join = NULL;
 	if (buffer == NULL)
 		return (NULL);
 	i = buffer->i; //TU KURWA!
+	j = 0;
 	while (buffer->buffer[i] != '\0' && buffer->buffer[i] != '\n')
+	{
 		i++;
+		j++;
+	}
 	if (buffer->buffer[i] == '\n')
+	{
 		i++;
+		j++;
+	}
 	if (!line && i > 0)
 	{	
 		line = malloc((sizeof(char) * (i - buffer->i + 1)));
@@ -99,11 +107,26 @@ void	ft_buffer2line(char *line, t_buffer *buffer, int start)
 		i++;
 	}
 	if (buffer->buffer[buffer->i] == '\n')
-	{
 		line[i + start] = '\n';
-	}
-		
 }
+
+// void	ft_buffer2line(char *line, t_buffer *buffer, int start)
+// {	
+// 	int	i;
+
+// 	i = 0;
+// 	while (buffer->buffer[buffer->i] != '\0' &&
+// 	buffer->buffer[buffer->i] != '\n')
+// 	{
+// 		line[buffer->i + start] = buffer->buffer[buffer->i];
+// 		buffer->i++;
+// 	}
+// 	if (buffer->buffer[buffer->i] == '\n')
+// 	{
+// 		line[buffer->i + start] = '\n';
+// 	}
+
+// }
 
 char	*ft_line_join(char *line, int i, t_buffer *buffer)
 {

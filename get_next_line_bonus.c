@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:01:01 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/16 19:27:50 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:49:08 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <stdio.h>
 #include <fcntl.h>	
 # include <unistd.h>
@@ -53,34 +53,6 @@ char	*get_next_line(int fd)
 	ft_buffer_clean(buffer, &head);
 	return (line);
 }
-
-// char	*ft_buffer_line(t_buffer *buffer, int fd)
-// {
-// 	char	*line;
-
-// 	line = NULL;
-// 	while (buffer->read > 0)
-// 	{
-// 		line = ft_line(buffer, line);
-// 		if (!line)
-// 			return (NULL);
-// 		if (buffer->buffer[buffer->i] == '\n')
-// 		{
-// 			buffer->i++;
-// 			if (buffer->i >= buffer->read)
-// 				ft_buffer_refill(buffer, fd);
-// 			return (line);
-// 		}
-// 		if (buffer->buffer[buffer->i] == '\0')
-// 			ft_buffer_refill(buffer, fd);
-// 		if (buffer->read == -1)
-// 		{
-// 			free(line);
-// 			line = NULL;
-// 		}
-// 	}
-// 	return (line);
-// }
 
 void	ft_buffer_refill(t_buffer *buffer, int fd)
 {
