@@ -6,107 +6,28 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/20 17:05:12 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/20 19:20:47 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-t_buffer	*ft_buffer_head(t_buffer **head, int fd)
-{
-	t_buffer	*buffer;
-
-	buffer = *head;
-	while (buffer != NULL)
-	{
-		if (buffer->fd == fd)
-		{
-			if (buffer->i >= buffer->read)
-				ft_buffer_refill(buffer, fd);
-			return (buffer);
-		}
-		buffer = buffer->next;
-	}
-	buffer = malloc(sizeof(t_buffer));
-	if (!buffer)
-		return (NULL);
-	buffer->fd = fd;
-	buffer->i = 0;
-	buffer->read = read(fd, buffer->buffer, BUFFER_SIZE);
-	if (buffer->read > 0)
-		buffer->buffer[buffer->read] = '\0';
-	buffer->next = *head;
-	*head = buffer;
-	return (buffer);
-}
-
-void	ft_buffer_clean(t_buffer *buffer, t_buffer **head)
-{
-	t_buffer	*temp;
-
-	if (!buffer || !head)
-		return ;
-	temp = *head;
-	if (temp == buffer)
-		*head = temp->next;
-	else
-	{
-		while (temp->next != buffer)
-			temp = temp->next;
-		temp->next = buffer->next;
-	}
-	if (buffer->read == -1)
-		head = NULL;
-	free(buffer);
-	buffer = NULL;
-}
-
-char	*ft_line(t_buffer *buffer, char *line)
-{
-	int		i;
-	char	*join;
-
-	join = NULL;
-	if (buffer == NULL)
-		return (NULL);
-	i = buffer->i; 
-	while (buffer->buffer[i] != '\0' && buffer->buffer[i] != '\n')
-		i++;
-	if (buffer->buffer[i] == '\n')
-		i++;
-	if (!line && i > 0)
-	{	
-		line = malloc((sizeof(char) * (i - buffer->i + 1))); 
-		if (!line)
-			return (NULL);
-		line[i - buffer->i] = '\0';
-		ft_buffer2line(line, buffer, 0);
-		return (line);
-	}
-	join = ft_line_join(line, i - buffer->i, buffer);
-	free(line);
-	if (!join)
-		return (NULL);
-	return (join);
-}
 
 void	ft_buffer2line(char *line, t_buffer *buffer, int start)
 {	
 	int	i;
 
 	i = 0;
-	while (buffer->buffer[buffer->i] != '\0' &&
-	buffer->buffer[buffer->i] != '\n')
+	while (buffer->str[buffer->i] != '\0'
+		&& buffer->str[buffer->i] != '\n')
 	{
-		line[i + start] = buffer->buffer[buffer->i];
+		line[i + start] = buffer->str[buffer->i];
 		buffer->i++;
 		i++;
 	}
-	if (buffer->buffer[buffer->i] == '\n')
+	if (buffer->str[buffer->i] == '\n')
 	{
 		line[i + start] = '\n';
 	}
-		
 }
 
 char	*ft_line_join(char *line, int i, t_buffer *buffer)
@@ -132,5 +53,59 @@ char	*ft_line_join(char *line, int i, t_buffer *buffer)
 	return (join);
 }
 
-// if there is -1 i need to null the header and clean all. 
-// clean all instead of clear one ?
+char	*ft_line_create(t_buffer *buffer, char *line)
+{
+	int		i;
+	char	*join;
+
+	join = NULL;
+	if (buffer == NULL)
+		return (NULL);
+	i = buffer->i;
+	while (buffer->str[i] != '\0' && buffer->str[i] != '\n')
+		i++;
+	if (buffer->str[i] == '\n')
+		i++;
+	if (!line && i > 0)
+	{	
+		line = malloc((sizeof(char) * (i - buffer->i + 1)));
+		if (!line)
+			return (NULL);
+		line[i - buffer->i] = '\0';
+		ft_buffer2line(line, buffer, 0);
+		return (line);
+	}
+	join = ft_line_join(line, i - buffer->i, buffer);
+	free(line);
+	if (!join)
+		return (NULL);
+	return (join);
+}
+
+char	*ft_line(t_buffer *buffer, int fd)
+{
+	char	*line;
+
+	line = NULL;
+	while (buffer->read > 0)
+	{
+		line = ft_line_create(buffer, line);
+		if (!line)
+			return (NULL);
+		if (buffer->str[buffer->i] == '\n')
+		{
+			buffer->i++;
+			return (line);
+		}
+		if (buffer->str[buffer->i] == '\0')
+			ft_buffer_refill(buffer, fd);
+		if (buffer->read == -1)
+		{
+			free(line);
+			line = NULL;
+		}
+	}
+	return (line);
+}
+
+//
