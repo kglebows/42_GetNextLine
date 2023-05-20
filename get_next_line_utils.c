@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/16 19:20:10 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/20 14:45:46 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ t_buffer	*ft_buffer_head(t_buffer **head, int fd)
 	while (buffer != NULL)
 	{
 		if (buffer->fd == fd)
+		{
+			if (buffer->i >= buffer->read)
+				ft_buffer_refill(buffer, fd);
 			return (buffer);
+		}
 		buffer = buffer->next;
 	}
 	buffer = malloc(sizeof(t_buffer));
@@ -127,3 +131,6 @@ char	*ft_line_join(char *line, int i, t_buffer *buffer)
 	}
 	return (join);
 }
+
+// if there is -1 i need to null the header and clean all. 
+// clean all instead of clear one ?

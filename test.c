@@ -10,14 +10,19 @@ int	main(void)
 	char	*getln;
 	int		i;
 	char	c;
+	// char	buff[43];
 
 	c = 0;
 	i = 0;
 	fd = open("test.txt", O_RDONLY);
 	getln = get_next_line(fd);
 	printf("%s", getln);
-	read(fd, &c, 1);
-	printf("\n#%c#", c);
+	// getln = get_next_line(fd);
+	// printf("%s", getln);
+	// read(fd, buff, 42);
+	// read(fd, buff, 0);
+	i = read(fd, &c, 1);
+	printf("read %c result = %d", c, i);
 	// while (getln != NULL)
 	// {
 	// printf("%s", getln);
