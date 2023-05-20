@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 17:26:11 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/16 18:49:02 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/20 14:57:32 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ t_buffer	*ft_buffer_head(t_buffer **head, int fd)
 	while (buffer != NULL)
 	{
 		if (buffer->fd == fd)
+		{
+			if (buffer->i >= buffer->read)
+				ft_buffer_refill(buffer, fd);
 			return (buffer);
+		}
 		buffer = buffer->next;
 	}
 	buffer = malloc(sizeof(t_buffer));

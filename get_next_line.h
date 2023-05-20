@@ -6,7 +6,7 @@
 /*   By: kglebows <kglebows@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/08 13:57:51 by kglebows          #+#    #+#             */
-/*   Updated: 2023/05/20 14:45:40 by kglebows         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:04:59 by kglebows         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,6 @@ void		ft_buffer_clean(t_buffer *buffer, t_buffer **head);
 char		*ft_line(t_buffer *buffer, char *line);
 char		*ft_line_join(char *line, int i, t_buffer *buffer);
 void		ft_buffer2line(char *line, t_buffer *buffer, int start);
-void		ft_buffer_refill(t_buffer *buffer, int fd);
+void		ft_buffer_refill(t_buffer *buffer,int fd);
 
 #endif

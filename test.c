@@ -21,8 +21,8 @@ int	main(void)
 	// printf("%s", getln);
 	// read(fd, buff, 42);
 	// read(fd, buff, 0);
-	i = read(fd, &c, 1);
-	printf("read %c result = %d", c, i);
+	// i = read(fd, &c, 1);
+	// printf("read %c result = %d", c, i);
 	// while (getln != NULL)
 	// {
 	// printf("%s", getln);
